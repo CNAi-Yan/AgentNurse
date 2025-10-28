@@ -1,5 +1,6 @@
 package com.agentnurse.controller;
 
+import com.agentnurse.constants.AuthConstants;
 import com.agentnurse.model.dto.ApiResponse;
 import com.agentnurse.model.dto.AuthResponse;
 import com.agentnurse.model.dto.LoginRequest;
@@ -76,6 +77,7 @@ class AuthControllerTest {
         assertNotNull(response.getBody());
         assertTrue(response.getBody().getSuccess());
         assertEquals("注册成功", response.getBody().getMessage());
+        assertEquals("Bearer", response.getBody().getData().getTokenType());
         assertEquals("jwt-token", response.getBody().getData().getAccessToken());
         assertEquals("testuser", response.getBody().getData().getUser().getUsername());
 
@@ -146,7 +148,7 @@ class AuthControllerTest {
         // Assert
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertFalse(response.getBody().getSuccess());
-        assertEquals("用户名/邮箱或密码错误", response.getBody().getMessage());
+        assertEquals(AuthConstants.MESSAGE_INVALID_CREDENTIALS, response.getBody().getMessage());
     }
 
     @Test
@@ -161,7 +163,7 @@ class AuthControllerTest {
         // Assert
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertFalse(response.getBody().getSuccess());
-        assertEquals("用户名/邮箱或密码错误", response.getBody().getMessage());
+        assertEquals(AuthConstants.MESSAGE_INVALID_CREDENTIALS, response.getBody().getMessage());
     }
 
     @Test

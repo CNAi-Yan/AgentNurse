@@ -1,5 +1,6 @@
 package com.agentnurse.controller;
 
+import com.agentnurse.constants.AuthConstants;
 import com.agentnurse.model.dto.ApiResponse;
 import com.agentnurse.model.dto.AuthResponse;
 import com.agentnurse.model.dto.LoginRequest;
@@ -53,7 +54,7 @@ public class AuthController {
             return ResponseEntity.ok(ApiResponse.success("登录成功", response));
         } catch (Exception e) {
             log.warn("登录失败: {}", e.getMessage());
-            return ResponseEntity.badRequest().body(ApiResponse.error("用户名/邮箱或密码错误"));
+            return ResponseEntity.badRequest().body(ApiResponse.error(AuthConstants.MESSAGE_INVALID_CREDENTIALS));
         }
     }
 

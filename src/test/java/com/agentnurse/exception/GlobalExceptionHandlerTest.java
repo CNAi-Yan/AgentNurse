@@ -1,5 +1,6 @@
 package com.agentnurse.exception;
 
+import com.agentnurse.constants.AuthConstants;
 import com.agentnurse.model.dto.ApiResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -95,7 +96,7 @@ class GlobalExceptionHandlerTest {
         assertNotNull(response);
         assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
         assertFalse(response.getBody().getSuccess());
-        assertEquals("用户名或密码错误", response.getBody().getMessage());
+        assertEquals(AuthConstants.MESSAGE_INVALID_CREDENTIALS, response.getBody().getMessage());
     }
 
     @Test

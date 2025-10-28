@@ -1,5 +1,6 @@
 package com.agentnurse.exception;
 
+import com.agentnurse.constants.AuthConstants;
 import com.agentnurse.model.dto.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -70,7 +71,7 @@ public class GlobalExceptionHandler {
             BadCredentialsException ex) {
         log.warn("认证失败: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(ApiResponse.error("用户名或密码错误"));
+                .body(ApiResponse.error(AuthConstants.MESSAGE_INVALID_CREDENTIALS));
     }
 
     /**

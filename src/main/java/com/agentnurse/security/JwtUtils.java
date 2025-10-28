@@ -2,6 +2,8 @@ package com.agentnurse.security;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.io.Decoders;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -25,6 +27,19 @@ public class JwtUtils {
     @Value("${jwt.expiration}")
     private long jwtExpirationMs;
 
+    private SecretKey signingKey;
+
+    @PostConstruct
+    public void initKey() {
+        byte[] keyBytes;
+        try {
+            keyBytes = Decoders.BASE64.decode(jwtSecret);
+        } catch (IllegalArgumentException e) {
+            keyBytes = jwtSecret.getBytes(StandardCharsets.UTF_8);
+        }
+        this.signingKey = Keys.hmacShaKeyFor(keyBytes);
+    }
+
     /**
      * 生成JWT令牌
      */
@@ -40,13 +55,13 @@ public class JwtUtils {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtExpirationMs);
 
-        SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
+        // SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
 
         return Jwts.builder()
                 .subject(username)
                 .issuedAt(now)
                 .expiration(expiryDate)
-                .signWith(key)
+                .signWith(signingKey)
                 .compact();
     }
 
@@ -54,10 +69,10 @@ public class JwtUtils {
      * 从JWT令牌中获取用户名
      */
     public String getUsernameFromToken(String token) {
-        SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
+        // SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
 
         Claims claims = Jwts.parser()
-                .verifyWith(key)
+                .verifyWith(signingKey)
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
@@ -70,8 +85,8 @@ public class JwtUtils {
      */
     public boolean validateToken(String token) {
         try {
-            SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
-            Jwts.parser().verifyWith(key).build().parseSignedClaims(token);
+            // SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
+            Jwts.parser().verifyWith(signingKey).build().parseSignedClaims(token);
             return true;
         } catch (MalformedJwtException e) {
             log.error("Invalid JWT token: {}", e.getMessage());

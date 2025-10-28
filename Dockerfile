@@ -3,6 +3,9 @@ FROM eclipse-temurin:17-jdk-alpine AS build
 WORKDIR /app
 
 # 复制 Maven 配置和源代码
++COPY mvnw .
++COPY mvnw.cmd .
++COPY .mvn .mvn
 COPY pom.xml .
 COPY src ./src
 

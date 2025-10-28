@@ -63,7 +63,7 @@ datasource:
   password: ${DB_PASSWORD:root}                # ❌ 默认值暴露
 
 jwt:
-  secret: ${JWT_SECRET:AgentNurseSecretKeyForJWTTokenGeneration2024}  # ❌ 默认值暴露
+  secret: ${JWT_SECRET:AgentNurseSecretKeyForJWTTokenGeneration2024}  # ❌ 默认值暴露 # 生产环境必须设置此环境变量
 ```
 
 **变更后**:

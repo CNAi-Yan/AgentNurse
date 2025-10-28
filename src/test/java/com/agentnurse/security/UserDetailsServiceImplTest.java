@@ -56,11 +56,20 @@ class UserDetailsServiceImplTest {
         assertEquals("testuser", userDetails.getUsername());
         assertEquals("encodedPassword", userDetails.getPassword());
         assertTrue(userDetails.isEnabled());
-        assertFalse(userDetails.isAccountLocked());
-        assertFalse(userDetails.isAccountExpired());
-        assertFalse(userDetails.isCredentialsExpired());
+        assertTrue(userDetails.isAccountNonLocked());
+        assertTrue(userDetails.isAccountNonExpired());
+        assertTrue(userDetails.isCredentialsNonExpired());
         
         verify(userRepository).findByUsername("testuser");
+    }
+
+    @Test
+    void loadUserByUsernameOrEmail_EmailSuccess() {
+        when(userRepository.findByUsernameOrEmail("test@example.com", "test@example.com"))
+            .thenReturn(Optional.of(testUser));
+        UserDetails userDetails = userDetailsService.loadUserByUsername("test@example.com");
+        assertEquals("testuser", userDetails.getUsername());
+        verify(userRepository).findByUsernameOrEmail("test@example.com", "test@example.com");
     }
 
     @Test
@@ -88,7 +97,7 @@ class UserDetailsServiceImplTest {
         UserDetails userDetails = userDetailsService.loadUserByUsername("testuser");
 
         // Assert
-        assertTrue(userDetails.isAccountLocked());
+        assertFalse(userDetails.isAccountNonLocked());
         assertFalse(userDetails.isEnabled());
     }
 
@@ -160,7 +169,7 @@ class UserDetailsServiceImplTest {
         UserDetails userDetails = userDetailsService.loadUserByUsername("testuser");
 
         // Assert
-        assertFalse(userDetails.isAccountLocked());
+        assertTrue(userDetails.isAccountNonLocked());
         assertTrue(userDetails.isEnabled());
     }
 
@@ -173,7 +182,7 @@ class UserDetailsServiceImplTest {
         UserDetails userDetails = userDetailsService.loadUserByUsername("testuser");
 
         // Assert
-        assertFalse(userDetails.isAccountExpired());
+        assertTrue(userDetails.isAccountNonExpired());
     }
 
     @Test
@@ -185,6 +194,6 @@ class UserDetailsServiceImplTest {
         UserDetails userDetails = userDetailsService.loadUserByUsername("testuser");
 
         // Assert
-        assertFalse(userDetails.isCredentialsExpired());
+        assertTrue(userDetails.isCredentialsNonExpired());
     }
 }

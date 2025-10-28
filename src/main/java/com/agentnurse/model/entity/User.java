@@ -53,8 +53,8 @@ public class User {
      */
     @NotBlank(message = "密码不能为空")
     @Column(nullable = false)
+    @lombok.ToString.Exclude
     private String password;
-
     /**
      * 用户角色
      */

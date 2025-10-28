@@ -27,8 +27,11 @@ public class UserService {
      */
     public User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()
+                || "anonymousUser".equals(authentication.getName())) {
+            throw new UsernameNotFoundException("未认证用户");
+        }
         String username = authentication.getName();
-        
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("用户不存在: " + username));
     }
@@ -58,13 +61,14 @@ public class UserService {
         User user = getCurrentUser();
 
         // 更新邮箱（需要重新验证）
-        if (request.getEmail() != null && !request.getEmail().equals(user.getEmail())) {
-            if (userRepository.existsByEmail(request.getEmail())) {
-                throw new IllegalArgumentException("邮箱已被其他用户使用");
-            }
-            user.setEmail(request.getEmail());
-            user.setEmailVerified(false);
-        }
+        if (request.getEmail() != null
+                && !request.getEmail().equalsIgnoreCase(user.getEmail())) {
+            if (userRepository.existsByEmailIgnoreCase(request.getEmail())) {
+                 throw new IllegalArgumentException("邮箱已被其他用户使用");
+             }
+            user.setEmail(request.getEmail().toLowerCase(java.util.Locale.ROOT));
+             user.setEmailVerified(false);
+         }
 
         // 更新其他资料
         if (request.getRealName() != null) {

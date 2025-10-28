@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  # MySQL 数据库
+  mysql:
+    image: mysql:8.0
+    container_name: agent-nurse-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: agent_nurse
+      MYSQL_USER: agent_nurse
+      MYSQL_PASSWORD: agent_nurse_pass
+      TZ: Asia/Shanghai
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./src/main/resources/db/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    networks:
+      - agent-nurse-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Spring Boot 应用（可选）
+  # app:
+  #   build: .
+  #   container_name: agent-nurse-app
+  #   environment:
+  #     SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/agent_nurse?useSSL=false&serverTimezone=UTC&characterEncoding=utf8
+  #     SPRING_DATASOURCE_USERNAME: agent_nurse
+  #     SPRING_DATASOURCE_PASSWORD: agent_nurse_pass
+  #   ports:
+  #     - "8080:8080"
+  #   depends_on:
+  #     mysql:
+  #       condition: service_healthy
+  #   networks:
+  #     - agent-nurse-network
+
+volumes:
+  mysql_data:
+    driver: local
+
+networks:
+  agent-nurse-network:
+    driver: bridge

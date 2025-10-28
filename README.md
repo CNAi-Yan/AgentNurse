@@ -31,7 +31,32 @@ AgentNurse 是一个面向慢病/术后患者的照护助理系统，提供记�
 - Maven 3.6+
 - MySQL 8.0+
 
-### 2. 启动数据库
+### 2. 配置环境变量
+
+创建 `.env` 文件（基于模板）：
+
+```bash
+# 复制环境变量模板
+cp .env.example .env
+
+# 编辑 .env 文件，设置你的密码和密钥
+nano .env
+```
+
+**重要配置项**：
+
+```bash
+# MySQL 配置
+MYSQL_ROOT_PASSWORD=your_secure_root_password
+DB_PASSWORD=your_secure_root_password  # 应与 MYSQL_ROOT_PASSWORD 一致
+
+# JWT 密钥（至少32字符）
+JWT_SECRET=your_jwt_secret_key_min_32_chars
+```
+
+详细配置说明请参考 [ENV_SETUP.md](ENV_SETUP.md)。
+
+### 3. 启动数据库
 
 使用 Docker Compose 快速启动 MySQL：
 
@@ -43,18 +68,6 @@ docker-compose up -d mysql
 
 ```sql
 CREATE DATABASE agent_nurse CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-```
-
-### 3. 配置应用
-
-编辑 `src/main/resources/application.yml`：
-
-```yaml
-spring:
-  datasource:
-    url: jdbc:mysql://localhost:3306/agent_nurse
-    username: root
-    password: your_password
 ```
 
 ### 4. 运行应用

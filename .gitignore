@@ -33,7 +33,11 @@ Thumbs.db
 # Application
 application-local.yml
 application-*.yml.local
+
+# Environment variables (sensitive data)
+.env
 *.env
+!.env.example
 
 # Build
 /dist/

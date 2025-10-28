@@ -3,9 +3,9 @@ spring:
     name: agent-nurse
 
   datasource:
-    url: jdbc:mysql://localhost:3306/agent_nurse?useSSL=false&serverTimezone=UTC&characterEncoding=utf8&allowPublicKeyRetrieval=true
-    username: root
-    password: ${DB_PASSWORD:root}
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:agent_nurse}?useSSL=false&serverTimezone=UTC&characterEncoding=utf8&allowPublicKeyRetrieval=true
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
@@ -28,7 +28,7 @@ server:
 
 # JWT配置
 jwt:
-  secret: ${JWT_SECRET:AgentNurseSecretKeyForJWTTokenGeneration2024}
+  secret: ${JWT_SECRET}
   expiration: 86400000  # 24小时（毫秒）
 
 # 日志配置
